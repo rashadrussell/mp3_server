@@ -372,7 +372,7 @@ taskRoute.get(function(req, res) {
 })
 .put(function(req, res) {
 
-	var editedUser = {
+	var editedTask = {
         "name": req.body.name,
         "description": req.body.description,
         "deadline": Date(req.body.deadline),
@@ -381,6 +381,10 @@ taskRoute.get(function(req, res) {
         "completed": req.body.completed
       }
 
+      if(editedTask.completed) {
+			editedTask.assignedUser = "";
+			editedTask.assignedUserName = "";
+		}
     
 	Task.findById(req.params.id, function(err, task) {
 
@@ -401,7 +405,8 @@ taskRoute.get(function(req, res) {
 			return;
 		}
 
-		if(task.assignedUser !== "" && (editedUser.assignedUser !== task.assignedUser)) {
+		if(task.assignedUser !== "" && (editedTask.assignedUser !== task.assignedUser) ) {
+
 
 			User.findById(task.assignedUser, function(err, user) {
 				
@@ -413,11 +418,12 @@ taskRoute.get(function(req, res) {
 				
 			});
 		}
+
 		
-		if(editedUser.assignedUser !== "" && (editedUser.assignedUser !== task.assignedUser) ) {
+		if(editedTask.assignedUser !== "" && (editedTask.assignedUser !== task.assignedUser) ) {
 			
 
-			User.findById(editedUser.assignedUser, function(err, user) {
+			User.findById(editedTask.assignedUser, function(err, user) {
 				if(user) {
 					User.findByIdAndUpdate(user._id, {$push: {pendingTasks: req.params.id}}, function(err, numAffected, res) {
 					
@@ -429,7 +435,7 @@ taskRoute.get(function(req, res) {
 			
 		}
 
-		task.update(editedUser, function(err, numAffected, res) {
+		task.update(editedTask, function(err, numAffected, res) {
 			console.log(res);
 		});
 		
