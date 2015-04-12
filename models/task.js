@@ -17,7 +17,6 @@ module.exports = mongoose.model('Task', TaskSchema);
 var User = require('./user');
 
 TaskSchema.pre('remove', function(next) {
-	console.log("ASSIGNED USER: " + this.assignedUser);
 
 	if(this.assignedUser) {
 		User.update({_id: this.assignedUser}, {$pull: {pendingTasks: this._id}}).exec();

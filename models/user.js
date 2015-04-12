@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 // Define our beer schema
 var UserSchema = new mongoose.Schema({
   name: String,
-  email: String,
+  email: {type: String, unique: true},
   pendingTasks: [String],
   dateCreated: Date
 });
